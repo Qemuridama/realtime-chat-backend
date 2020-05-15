@@ -5,6 +5,7 @@ services:
     build: .
     command: npm run dev:server
     volumes:
-      - .:/usr/app/
+      - .:/app/
+      - /app/node_modules
     ports:
       - 3333:3333

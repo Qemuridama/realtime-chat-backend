@@ -1,5 +1,5 @@
 FROM node:13-alpine
-WORKDIR /usr/app
+WORKDIR /app
 COPY package.json .
-RUN npm install --quiet
+RUN npm install
 COPY . .

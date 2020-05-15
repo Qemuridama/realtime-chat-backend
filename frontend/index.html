@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  
+  <title>Real Time Chat</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+</head>
+
+<body>
+  <form id="chat">
+    <input type="text" name="username" placeholder="Digite seu usuário">
+    <input type="text" name="message" placeholder="Digite sua mensagem">
+    <button type="submit">Enviar</button>
+  </form>
+  <ul id="messages"></ul>
+  <script>
+    const api = 'http://localhost:3333'
+    const formNode = document.querySelector('form')
+    
+    let socket = io(api)
+    
+    formNode.addEventListener('submit', function(e) {
+      
+      e.preventDefault(); // prevents page reloading
+      
+      let author = document.querySelector('#chat input[name=username]').value
+      let content = document.querySelector('#chat input[name=message]').value
+      
+      if (author.length && content.length) {
+        let message = {
+          author: author,
+          content: content
+        }
+        
+        socket.emit('chat message', message)
+        document.querySelector('#chat input[name=message]').value = ''
+      }
+    });
+    
+    socket.on('chat message', function(message){
+      let containerMessages = document.getElementById('messages')
+      let li = document.createElement('li')
+      let text = document.createTextNode(`${message.author}: ${message.content}`)
+      li.appendChild(text)
+      containerMessages.insertBefore(li, containerMessages.firstChild);
+    });
+  </script>
+</body>
+</html>

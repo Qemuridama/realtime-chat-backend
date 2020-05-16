@@ -5,22 +5,15 @@ import socket from 'socket.io';
 import cors from 'cors';
 
 const app = express();
-app.use(cors());
-
 const server = http.createServer(app);
 const io = socket(server);
 
+// cors
+io.origins("*:*")
 
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'frontend', 'index.html'));
 });
-
-
-// TODO
-io.origins(['*']);
-//io.origins('*:*') 
-//io.origins('*')
-//io.set('origins', '*:*');
 
 
 interface MessageInterface {

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <title>Real Time Chat</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 </head>
@@ -36,12 +36,12 @@
           content: content
         }
         
-        socket.emit('chat message', message)
+        socket.emit('new_message', message)
         document.querySelector('#chat input[name=message]').value = ''
       }
     });
     
-    socket.on('chat message', function(message){
+    socket.on('new_message', function(message){
       let containerMessages = document.getElementById('messages')
       let li = document.createElement('li')
       let text = document.createTextNode(`${message.author}: ${message.content}`)

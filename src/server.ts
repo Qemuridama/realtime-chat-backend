@@ -15,6 +15,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'frontend', 'index.html'));
 });
 
+enum EventMessage {
+  NEW_MESSAGE = "new_message"
+}
 
 interface MessageInterface {
   author: string
@@ -25,9 +28,8 @@ interface MessageInterface {
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('chat message', (message: MessageInterface) => {
-    console.log(`${message.author} says: ${message.content}`);
-    io.emit('chat message', message);
+  socket.on(EventMessage['NEW_MESSAGE'], (message: MessageInterface) => {
+    io.emit(EventMessage['NEW_MESSAGE'], message);
   });
 });
 

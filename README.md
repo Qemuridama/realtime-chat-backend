@@ -1,4 +1,4 @@
-# exemplo docker + typescript + express
+# realtime-chat-backend
 
 ## Iniciar servidor
 

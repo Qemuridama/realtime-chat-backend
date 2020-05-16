@@ -29,6 +29,8 @@ io.on('connection', (socket) => {
   console.log('a user connected');
 
   socket.on(EventMessage['NEW_MESSAGE'], (message: MessageInterface) => {
+    message.date = new Date()
+    console.log(`${message.author} says: ${message.content} at ${message.date}`);
     io.emit(EventMessage['NEW_MESSAGE'], message);
   });
 });

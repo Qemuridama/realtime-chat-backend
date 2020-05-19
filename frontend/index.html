@@ -9,43 +9,50 @@
 </head>
 
 <body>
-  <form id="chat">
+  <form id="author">
     <input type="text" name="username" placeholder="Digite seu usuário">
-    <input type="text" name="message" placeholder="Digite sua mensagem">
+    <button type="submit">Alterar nome</button>
+  </form>
+  <form id="message">
+    <input type="text" name="content" placeholder="Digite sua mensagem">
     <button type="submit">Enviar</button>
   </form>
   <ul id="messages"></ul>
   <script>
-    //const api = 'http://192.168.99.100:3333/'
-    const api = 'http://localhost:3333/'
+    //const api = 'http://192.168.99.100:3333'
+    const api = 'http://localhost:3333'
 
-    const formNode = document.querySelector('form')
+    const formAuthor = document.querySelector('#author')
+    const formMessage = document.querySelector('#message')
+
+    const authorNode = document.querySelector('#author input[name=username]');
+    const messageNode = document.querySelector('#message input[name=content]');
     
-    let socket = io(api)
+    let socket = io(api, { query:`author=${authorNode.value}` })
     
-    formNode.addEventListener('submit', function(e) {
+    formMessage.addEventListener('submit', function(e) {
+      e.preventDefault();
       
-      e.preventDefault(); // prevents page reloading
-      
-      let author = document.querySelector('#chat input[name=username]').value
-      let content = document.querySelector('#chat input[name=message]').value
-      
-      if (author.length && content.length) {
-        let message = {
-          author: author,
-          content: content
+      let contentValue = messageNode.value;
+
+      if (content.length) {
+        let message = { 
+          content,
         }
         
         socket.emit('new_message', message)
-        document.querySelector('#chat input[name=message]').value = ''
+        contentValue = ''
       }
     });
     
     socket.on('new_message', function(message){
-      let containerMessages = document.getElementById('messages')
-      let li = document.createElement('li')
-      let text = document.createTextNode(`${message.author}: ${message.content}`)
-      li.appendChild(text)
+      let containerMessages = document.getElementById('messages');
+      let li = document.createElement('li');
+      let text = document.createTextNode(
+        `${message.author.id} - ${message.author.name}: ${message.content}`
+      );
+
+      li.appendChild(text);
       containerMessages.insertBefore(li, containerMessages.firstChild);
     });
   </script>

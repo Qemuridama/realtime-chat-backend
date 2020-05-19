@@ -17,6 +17,15 @@ app.get('/', (req: any, res: any) => {
   res.sendFile(path.resolve(__dirname, '..', 'frontend', 'index.html'));
 });
 
+app.put('/authors/:id', (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body
+  
+  const index = authors.findIndex(author => author.id === id)
+  authors[index].name = name
+  res.status(200)
+});
+
 enum EventMessage {
   NEW_MESSAGE = 'new_message',
   INIT_MESSAGES = 'initial_messages',
@@ -53,7 +62,7 @@ io.on('connection', (socket) => {
       `${message.author.name} says: ${message.content} at ${message.date}`
     );
     messages.push(message);
-    io.emit(EventMessage['NEW_MESSAGE'], message);
+    io.emit(EventMessage.NEW_MESSAGE, message);
   });
 });
 

@@ -10,8 +10,23 @@ const io = socket(server);
 // cors
 io.origins('*:*');
 
+const messages: MessageInterface[] = [];
+const authors: AuthorInterface[] = [];
+
+app.use(express.json());
+
+
 app.get('/', (req: any, res: any) => {
   res.sendFile(path.resolve(__dirname, '..', 'frontend', 'index.html'));
+});
+
+app.put('/authors/:id', (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body
+  
+  const index = authors.findIndex(author => author.id === id)
+  authors[index].name = name
+  res.status(200).json()
 });
 
 enum EventMessage {
@@ -19,26 +34,38 @@ enum EventMessage {
   INIT_MESSAGES = 'initial_messages',
 }
 
-interface MessageInterface {
-  author: string;
-  date: Date;
-  content: string;
+interface AuthorInterface {
+  id: string
+  name: string
 }
 
-const messages: MessageInterface[] = [];
+interface MessageInterface {
+  author: AuthorInterface
+  date: Date
+  content: string
+}
 
-io.on('connection', (socket: any) => {
-  console.log('a user connected');
+io.on('connection', (socket) => {
+  const authorName = socket.handshake.query.author
+  authors.push({
+    id: socket.id,
+    name: authorName,
+  });
 
-  io.emit(EventMessage['INIT_MESSAGES'], messages);
+  console.log(`a user (${authorName}) connected`);
 
-  socket.on(EventMessage['NEW_MESSAGE'], (message: MessageInterface) => {
-    message.date = new Date();
+  io.emit(EventMessage.INIT_MESSAGES, messages);
+
+  socket.on(EventMessage.NEW_MESSAGE, (message: MessageInterface) => {
+    message.date = new Date()
+    const index = authors.findIndex(author => author.id === socket.id)
+    message.author = authors[index]
+
     console.log(
-      `${message.author} says: ${message.content} at ${message.date}`
+      `${message.author.name} says: ${message.content} at ${message.date}`
     );
     messages.push(message);
-    io.emit(EventMessage['NEW_MESSAGE'], message);
+    io.emit(EventMessage.NEW_MESSAGE, message);
   });
 });
 

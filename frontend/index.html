@@ -29,6 +29,12 @@
     const messageNode = document.querySelector('#message input[name=content]');
     
     let socket = io(api, { query:`author=${authorNode.value}` })
+
+    socket.on('initial_messages', function (messages) {
+      messages.map(message => {
+        addMessage(message);
+      })
+    });
     
     formAuthor.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -61,8 +67,8 @@
         contentValue = ''
       }
     });
-    
-    socket.on('new_message', function(message){
+
+    function addMessage(message){
       let containerMessages = document.getElementById('messages');
       let li = document.createElement('li');
       let text = document.createTextNode(
@@ -71,6 +77,10 @@
 
       li.appendChild(text);
       containerMessages.insertBefore(li, containerMessages.firstChild);
+    }
+    
+    socket.on('new_message', function(message){
+      addMessage(message);
     });
   </script>
 </body>

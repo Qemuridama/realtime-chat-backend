@@ -13,6 +13,9 @@ io.origins('*:*');
 const messages: MessageInterface[] = [];
 const authors: AuthorInterface[] = [];
 
+app.use(express.json());
+
+
 app.get('/', (req: any, res: any) => {
   res.sendFile(path.resolve(__dirname, '..', 'frontend', 'index.html'));
 });
@@ -23,7 +26,7 @@ app.put('/authors/:id', (req, res) => {
   
   const index = authors.findIndex(author => author.id === id)
   authors[index].name = name
-  res.status(200)
+  res.status(200).json()
 });
 
 enum EventMessage {
